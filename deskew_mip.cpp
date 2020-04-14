@@ -54,8 +54,9 @@ int main(int argc, char * argv[]) {
 	img = deskew_mip(img, pitch_xy, obj_angle, stage_step);
 	printf("\n");
 
-	const float voxel_size[3] = {pitch_xy, pitch_xy, 1};
-	const char * description = "ImageJ=0.00\nspacing=1\nunit=nm";
+	const float voxel_size[3] = {pitch_xy, pitch_xy, pitch_xy};
+	char description [128];
+	sprintf(description, "ImageJ=0.00\nspacing=%f\nunit=nm", pitch_xy);
 	img.save_tiff(file_out, 0, voxel_size, description, true);
 	if (display) {
 		img.display();
