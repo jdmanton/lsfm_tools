@@ -1,6 +1,10 @@
 all: deskew_mip deskew_linear deskew_fourier
 .PHONY: all
 
+# to cross compile for windows using MXE use:
+# make CROSS=x86_64-w64-mingw32.static- <binary_name>.exe
+CXX=$(CROSS)g++
+
 deskew_mip: deskew_mip.cpp
 	$(CXX) -Dcimg_use_cpp11 -Dcimg_use_openmp -Dcimg_use_tiff -Dcimg_use_zlib \
 	-std=c++11 -fopenmp -pthread -Ofast \
