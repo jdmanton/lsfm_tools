@@ -69,8 +69,8 @@ int main(int argc, char * argv[]) {
 	printf("\n");
 
 	if (display) {
-		img.display();
-		printf("\n");
+	  img.display();
+	  printf("\n");
 	}
 
 	return 0;
