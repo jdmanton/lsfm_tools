@@ -53,13 +53,14 @@ int process(int argc, char * argv[]) {
 
 int main(int argc, char * argv[]) {
 
-  if (argc > 1) {
-    printf("lsfm [command]\n"
+  if (argc == 1) {
+    printf("\nlsfm [command] [options] \n\n"
 	   " Use one of the following command:\n"
 	   "  deskew : deskew lightsheet stack\n"
 	   "  deconv : deconvolution of a deskewed stack\n"
 	   "  mip    : deskew and maximum intensity projection\n\n"
-	   " If no command is provided all steps will be performed\n");
+	   " If no command is provided all steps will be performed\n\n");
+    return 0;
   }
 
   if (!strcmp(argv[1], "deskew")) {
