@@ -8,6 +8,9 @@ namespace lsfm {
 		const float stage_step,
 		const char * method);
 
+  CImg<> proj(const CImg<> & raw_stack,
+    const char* method);
+
   CImg<> deskew_mip(const CImg<> &raw_stack,
 		    const float pitch_xy,
 		    const float obj_angle,
