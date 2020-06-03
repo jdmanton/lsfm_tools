@@ -26,7 +26,8 @@ int deskew(int argc, char * argv[]) {
   sprintf(description, "ImageJ=0.00\nspacing=%f\nunit=nm", new_z);
 
   start_time = cimg::time();
-  img.save_tiff(file_out, 0, voxel_size, description, true);
+//   img.save_tiff(file_out, 0, voxel_size, description, true);
+  lsfm::save_tiff(img, file_out);
   int out_time = cimg::time() - start_time;
   printf("Save time:       %d ms\n", out_time);
   printf("\n");

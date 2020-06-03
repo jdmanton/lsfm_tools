@@ -18,7 +18,7 @@ lsfm_LIBS = lsfm tiff jpeg lzma z fftw3_omp fftw3 m X11
 
 LIB = liblsfm.a
 
-liblsfm.a_SRCS = deskew.cpp proj.cpp
+liblsfm.a_SRCS = deskew.cpp proj.cpp io.cpp tinytiffwriter.cpp
 liblsfm.a_LIBS = fftw3_omp fftw3 m
 
 include magick.mk

@@ -19,4 +19,6 @@ namespace lsfm {
 
   CImg<> deconvolve(const CImg<> &raw_stack);
 
+  void save_tiff(CImg<> &img, const char* filename);
+
 }
