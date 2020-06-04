@@ -21,4 +21,6 @@ namespace lsfm {
 
   void save_tiff(CImg<> &img, const char* filename);
 
+  CImg<> load_tiff(const char* filename);
+
 }

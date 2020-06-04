@@ -11,26 +11,10 @@ int deskew(int argc, char * argv[]) {
   const bool display = cimg_option("-d", false, "display MIP");
   if (!file_img || !file_out) {return 1;}
 
-  int start_time = cimg::time();
-  CImg<> img(file_img);
-  int in_time = cimg::time() - start_time;
-
-  printf("\nLoad time:       %d ms\n", in_time);
-  printf("Raw dimensions:  %d x %d x %d\n", img.width(), img.height(), img.depth());
-
+  CImg<> img = lsfm::load_tiff(file_img);
   img = lsfm::deskew(img, pitch_xy, obj_angle, stage_step, method);
-
-  const float new_z = stage_step * std::cos(obj_angle * M_PI / 180);
-  const float voxel_size[3] = {pitch_xy, pitch_xy, new_z};
-  char description [128];
-  sprintf(description, "ImageJ=0.00\nspacing=%f\nunit=nm", new_z);
-
-  start_time = cimg::time();
-//   img.save_tiff(file_out, 0, voxel_size, description, true);
   lsfm::save_tiff(img, file_out);
-  int out_time = cimg::time() - start_time;
-  printf("Save time:       %d ms\n", out_time);
-  printf("\n");
+  
 
   if (display) {
     img.display();
@@ -53,34 +37,15 @@ int proj(int argc, char * argv[]) {
   const bool display = cimg_option("-d", false, "display projection");
   if (!file_img || !file_out) {return 1;}
 
-  int start_time = cimg::time();
-  CImg<> img(file_img);
-  int in_time = cimg::time() - start_time;
-
-  printf("\nLoad time:       %d ms\n", in_time);
-  printf("Raw dimensions:  %d x %d x %d\n", img.width(), img.height(), img.depth());
-
+  CImg<> img = lsfm::load_tiff(file_img);
   img = lsfm::proj(img, method);
-
-  const float voxel_size[3] = {pitch_xy, pitch_xy, 1};
-  char description [128];
-  sprintf(description, "ImageJ=0.00\nspacing=0\nunit=nm");
-
-  start_time = cimg::time();
-  img.save_tiff(file_out, 0, voxel_size, description, true);
-  int out_time = cimg::time() - start_time;
-  printf("Save time:       %d ms\n", out_time);
-  printf("\n");
+  lsfm::save_tiff(img, file_out);
 
   if (display) {
     img.display();
     printf("\n");
   }
 
-  return 0;
-}
-
-int process(int argc, char * argv[]) {
   return 0;
 }
 
