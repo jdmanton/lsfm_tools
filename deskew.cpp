@@ -77,7 +77,7 @@ namespace lsfm {
 		const float obj_angle,
 		const float stage_step,
 		const char * method) {
-    if (strcmp(method, "fft")) {
+    if (!strcmp(method, "fft")) {
       return deskew_fft(raw_stack, pitch_xy, obj_angle, stage_step);
     } else {
       return deskew_linear(raw_stack, pitch_xy, obj_angle, stage_step);
