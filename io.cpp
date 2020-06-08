@@ -5,8 +5,6 @@ using namespace cimg_library;
 
 namespace lsfm {
     void save_tiff(CImg<> &img, const char* filename, float pitch_xy, float spacing_z) {
-        // TODO: it's a bit weird that &img can't be const (?)
-
         int start_time = cimg::time();
         TinyTIFFFile* tiff = TinyTIFFWriter_open(filename, 32, img.width(), img.height());
         if (tiff) {
