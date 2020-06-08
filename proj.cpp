@@ -43,26 +43,23 @@ namespace lsfm {
 
 
 	CImg<> proj(const CImg<> &raw_stack, const char* method) {
-		CImg<> to_return;
 		CImg<> proj(raw_stack.width(), raw_stack.height(), 1, 1, 0);
 
 		printf("\nProjecting data using ");
 		int start_time = cimg::time();
-
 		if (!strcmp(method, "laplacian")) {
 			printf("Laplacian method...\n");
-			to_return = laplacian_mip(raw_stack, proj);
+			proj = laplacian_mip(raw_stack, proj);
 		} else if (!strcmp(method, "mean")) {
 			printf("mean intensity...\n");
-			to_return = mean(raw_stack, proj);
+			proj = mean(raw_stack, proj);
 		} else {
 			printf("maximum intensity...\n");
-			to_return = mip(raw_stack, proj);
+			proj = mip(raw_stack, proj);
 		}
-		
 		int calc_time = cimg::time() - start_time;
 		printf("Projection time: %d ms\n", calc_time);
 
-		return to_return;
+		return proj;
 	}
 }
