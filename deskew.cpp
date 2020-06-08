@@ -64,15 +64,20 @@ namespace lsfm {
 
 		CImg<> deskewed;
 		int start_time = cimg::time();
+		printf("\nDeskewing data using ");
 		if (!strcmp(method, "fft")) {
+			printf("Fourier method...\n");
 			deskewed = deskew_fft(raw_stack, new_height, offset, slice_shift);
 		} else if (!strcmp(method, "nn")) {
+			printf("nearest-neighbour method...\n");
 			deskewed = deskew_nn(raw_stack, new_height, offset, slice_shift);
 		} else {
+			printf("linear method...\n");
 			deskewed = deskew_linear(raw_stack, new_height, offset, slice_shift);
 		}
 		int calc_time = cimg::time() - start_time;
 		printf("Deskew time:     %d ms\n", calc_time);
+		
 		return deskewed;
 	}
 }
