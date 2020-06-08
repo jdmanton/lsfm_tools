@@ -820,6 +820,54 @@ void TinyTIFFWriter_writeImage(TinyTIFFFile* tiff, float* data) {
 }
 
 
+void TinyTIFFWriter_writeImageIJ(TinyTIFFFile* tiff, float* data, float pitch_xy, float spacing_z) {
+     if (!tiff) return;
+     long pos=ftell(tiff->file);
+     int hsize=TIFF_HEADER_SIZE;
+
+     TinyTIFFWriter_startIFD(tiff,hsize);
+     TinyTIFFWriter_writeIFDEntryLONG(tiff, TIFF_FIELD_IMAGEWIDTH, tiff->width);
+     TinyTIFFWriter_writeIFDEntryLONG(tiff, TIFF_FIELD_IMAGELENGTH, tiff->height);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_BITSPERSAMPLE, tiff->bitspersample);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_COMPRESSION, 1);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_PHOTOMETRICINTERPRETATION, 1);
+
+     /*
+        Awfulness to write the correct description to make ImageJ happy
+     */
+     char actual_description[64];
+     sprintf(actual_description, "ImageJ=0.0\nspacing=%.3f\nunit=nm\n", spacing_z);
+     char* description = new char[strlen(actual_description) + 1];
+     for (int i = 0; i < strlen(actual_description); i++) {
+        description[i] = actual_description[i];
+     }
+     description[strlen(actual_description)] = '\0';
+     int datapos = 0;
+     int sizepos = 0;
+     TinyTIFFWriter_writeIFDEntryASCIIARRAY(tiff, TIFF_FIELD_IMAGEDESCRIPTION, description, strlen(actual_description) + 1, &datapos, &sizepos);
+     tiff->descriptionOffset=tiff->lastStartPos+datapos;
+     tiff->descriptionSizeOffset=tiff->lastStartPos+sizepos;
+     /*
+        END AWFULNESS
+     */
+
+     TinyTIFFWriter_writeIFDEntryLONG(tiff, TIFF_FIELD_STRIPOFFSETS, pos+2+hsize);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_SAMPLESPERPIXEL, 1);
+     TinyTIFFWriter_writeIFDEntryLONG(tiff, TIFF_FIELD_ROWSPERSTRIP, tiff->height);
+     TinyTIFFWriter_writeIFDEntryLONG(tiff, TIFF_FIELD_STRIPBYTECOUNTS, tiff->width*tiff->height*(tiff->bitspersample/8));
+     TinyTIFFWriter_writeIFDEntryRATIONAL(tiff, TIFF_FIELD_XRESOLUTION, 1, pitch_xy);
+     TinyTIFFWriter_writeIFDEntryRATIONAL(tiff, TIFF_FIELD_YRESOLUTION, 1, pitch_xy);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_PLANARCONFIG, 1);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_RESOLUTIONUNIT, 1);
+     TinyTIFFWriter_writeIFDEntrySHORT(tiff, TIFF_FIELD_SAMPLEFORMAT, 3);
+     
+     TinyTIFFWriter_endIFD(tiff);
+     TinyTIFFWriter_fwrite(data, tiff->width*tiff->height*(tiff->bitspersample/8), 1, tiff);
+     tiff->frames=tiff->frames+1;
+     free(description);
+}
+
+
 
 
 

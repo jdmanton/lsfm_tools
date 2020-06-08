@@ -14,7 +14,8 @@ int deskew(int argc, char * argv[]) {
 
 	CImg<> img = lsfm::load_tiff(file_img);
 	img = lsfm::deskew(img, pitch_xy, obj_angle, stage_step, method);
-	lsfm::save_tiff(img, file_out);
+	float spacing_z = stage_step * std::cos(obj_angle * M_PI / 180);
+	lsfm::save_tiff(img, file_out, pitch_xy, spacing_z);
 
 
 	if (display) {
@@ -42,7 +43,7 @@ int proj(int argc, char * argv[]) {
 
 	CImg<> img = lsfm::load_tiff(file_img);
 	img = lsfm::proj(img, method);
-	lsfm::save_tiff(img, file_out);
+	lsfm::save_tiff(img, file_out, pitch_xy, 0);
 
 	if (display) {
 		img.display();

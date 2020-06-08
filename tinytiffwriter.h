@@ -159,6 +159,7 @@ TINYTIFFWRITER_LIB_EXPORT TinyTIFFFile* TinyTIFFWriter_open(const char* filename
 TINYTIFFWRITER_LIB_EXPORT void TinyTIFFWriter_writeImage(TinyTIFFFile* tiff, void* data);
 TINYTIFFWRITER_LIB_EXPORT void TinyTIFFWriter_writeImage(TinyTIFFFile* tiff, float* data);
 TINYTIFFWRITER_LIB_EXPORT void TinyTIFFWriter_writeImage(TinyTIFFFile* tiff, double* data);
+TINYTIFFWRITER_LIB_EXPORT void TinyTIFFWriter_writeImageIJ(TinyTIFFFile* tiff, float* data, float pitch_xy, float spacing_z);
 
 /*! \brief close a given TIFF file
     \ingroup tinytiffwriter
