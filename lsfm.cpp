@@ -74,6 +74,8 @@ int main(int argc, char * argv[]) {
 		return deconv(argc, argv);
 	} else if (!strcmp(argv[1], "proj")) {
 		return proj(argc, argv);
+	} else {
+		printf("Command %s not implemented.\n", argv[1]);
 	}
 
 	return 0;
