@@ -17,12 +17,9 @@ int deskew(int argc, char * argv[]) {
 	float spacing_z = stage_step * std::cos(obj_angle * M_PI / 180);
 	lsfm::save_tiff(img, file_out, pitch_xy, spacing_z);
 
-
 	if (display) {
-		img.display();
-		printf("\n");
+		img.display("Deskewed stack", false);
 	}
-
 	return 0;
 }
 
@@ -46,10 +43,8 @@ int proj(int argc, char * argv[]) {
 	lsfm::save_tiff(img, file_out, pitch_xy, 0);
 
 	if (display) {
-		img.display();
-		printf("\n");
+		img.display("Stack projection", false);
 	}
-
 	return 0;
 }
 
