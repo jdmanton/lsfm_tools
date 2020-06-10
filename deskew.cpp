@@ -54,7 +54,7 @@ namespace lsfm {
 	}
 
 
-	CImg<> deskew(const CImg<> &raw_stack, const float pitch_xy, const float obj_angle, const float stage_step, const char * method) {
+	CImg<> deskew(const CImg<> &raw_stack, const float pitch_xy, const float obj_angle, const float stage_step, const char* method) {
 		const float slice_shift = stage_step * std::sin(obj_angle * M_PI / 180) / pitch_xy;
 		const int offset = ceil(fabs(slice_shift) * raw_stack.depth()) - 1;
 		const int new_height = raw_stack.height() + offset;
@@ -65,7 +65,7 @@ namespace lsfm {
 		CImg<> deskewed;
 		int start_time = cimg::time();
 		printf("\nDeskewing data using ");
-		if (!strcmp(method, "fft")) {
+		if (!strcmp(method, "fourier")) {
 			printf("Fourier method...\n");
 			deskewed = deskew_fft(raw_stack, new_height, offset, slice_shift);
 		} else if (!strcmp(method, "nn")) {

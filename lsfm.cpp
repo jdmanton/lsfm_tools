@@ -1,15 +1,15 @@
 #include "lsfm.h"
 
 
-int deskew(int argc, char * argv[]) {
+int deskew(int argc, char* argv[]) {
 	cimg_help("Deskew stage scan light sheet data");
-	const char * method = cimg_option("-method", "", "method []");
-	const char * file_img = cimg_option("-i", (char*) 0, "input image file");
-	const char * file_out = cimg_option("-o", (char*) 0, "output image file");
-	const float pitch_xy = cimg_option("-xy", (float)104, "xy pixel pitch");
-	const float obj_angle = cimg_option("-a", (float)58.2, "objective angle");
-	const float stage_step = cimg_option("-s", (float)500, "stage step");
-	const bool display = cimg_option("-d", false, "display MIP");
+	const char* method =     cimg_option("-m", "", "method [linear, nn, fourier]");
+	const char* file_img =   cimg_option("-i", (char*) 0, "input image file");
+	const char* file_out =   cimg_option("-o", (char*) 0, "output image file");
+	const float pitch_xy =   cimg_option("-xy", (float) 104, "xy pixel pitch");
+	const float obj_angle =  cimg_option("-a", (float) 58.2, "objective angle");
+	const float stage_step = cimg_option("-s", (float) 500, "stage step");
+	const bool display =     cimg_option("-d", false, "display deskewed stack");
 	if (!file_img || !file_out) {return 1;}
 
 	CImg<> img = lsfm::load_tiff(file_img);
@@ -24,18 +24,18 @@ int deskew(int argc, char * argv[]) {
 }
 
 
-int deconv(int argc, char * argv[]) {
+int deconv(int argc, char* argv[]) {
 	return 0;
 }
 
 
-int proj(int argc, char * argv[]) {
+int proj(int argc, char* argv[]) {
 	cimg_help("Project stack");
-	const char * method = cimg_option("-method", "", "method []");
-	const char * file_img = cimg_option("-i", (char*) 0, "input image file");
-	const char * file_out = cimg_option("-o", (char*) 0, "output image file");
-	const float pitch_xy = cimg_option("-xy", (float)104, "xy pixel pitch");
-	const bool display = cimg_option("-d", false, "display projection");
+	const char* method =   cimg_option("-m", "", "method []");
+	const char* file_img = cimg_option("-i", (char*) 0, "input image file");
+	const char* file_out = cimg_option("-o", (char*) 0, "output image file");
+	const float pitch_xy = cimg_option("-xy", (float) 104, "xy pixel pitch");
+	const bool display =   cimg_option("-d", false, "display projection");
 	if (!file_img || !file_out) {return 1;}
 
 	CImg<> img = lsfm::load_tiff(file_img);
@@ -49,7 +49,7 @@ int proj(int argc, char * argv[]) {
 }
 
 
-int main(int argc, char * argv[]) {
+int main(int argc, char* argv[]) {
 	if (argc == 1) {
 		printf("\nlsfm [command] [options] \n\n"
 			   "Use one of the following commands:\n"
