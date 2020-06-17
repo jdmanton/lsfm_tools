@@ -35,8 +35,11 @@ int deconv(int argc, char* argv[]) {
 	const bool display = cimg_option("-d", false, "display deconvolved stack\n");
 	if(!file_img || !file_psf || !file_out) {return 1;}
 
+	printf("Loading raw stack...\n");
 	CImg<> img = lsfm::load_tiff(file_img);
+	printf("Loading PSF...\n");
 	CImg<> psf = lsfm::load_tiff(file_psf);
+	printf("Creating OTF...\n");
 	CImgList<> otf = lsfm::psf2otf(psf, img.width(), img.height(), img.depth());
 	img = lsfm::deconv(img, otf, method, num_iters);
 	lsfm::save_tiff(img, file_out, pitch_xy, spacing_z);

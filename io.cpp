@@ -24,7 +24,7 @@ namespace lsfm {
         CImg<> img(filename);
         int in_time = cimg::time() - start_time;
         printf("\nLoad time:       %d ms\n", in_time);
-        printf("Raw dimensions:  %d x %d x %d\n", img.width(), img.height(), img.depth());
+        printf("Dimensions:      %d x %d x %d\n", img.width(), img.height(), img.depth());
 
         return img;
     }
