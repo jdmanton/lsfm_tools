@@ -24,6 +24,27 @@ int deskew(int argc, char* argv[]) {
 
 
 int deconv(int argc, char* argv[]) {
+	cimg_help("\nDeconvolve stack using given PSF");
+	const char* method = cimg_option("-m", "rl", "method [rl, barl]");
+	const char* file_img = cimg_option("-i", (char*) 0, "input image file");
+	const char* file_psf = cimg_option("-p", (char*) 0, "input PSF file");
+	const char* file_out = cimg_option("-o", (char*) 0, "output image file");
+	const int num_iters = cimg_option("-n", 10, "number of iterations");
+	const float pitch_xy = cimg_option("-xy", (float) 104, "xy pixel pitch");
+	const float spacing_z = cimg_option("-z", (float) 250, "z pixel pitch");
+	const bool display = cimg_option("-d", false, "display deconvolved stack\n");
+	if(!file_img || !file_psf || !file_out) {return 1;}
+
+	CImg<> img = lsfm::load_tiff(file_img);
+	CImg<> psf = lsfm::load_tiff(file_psf);
+	CImgList<> otf = lsfm::psf2otf(psf, img.width(), img.height(), img.depth());
+	img = lsfm::deconv(img, otf, method, num_iters);
+	lsfm::save_tiff(img, file_out, pitch_xy, spacing_z);
+
+	if(display) {
+		img.display("Deconvolved stack", false);
+	}
+
 	return 0;
 }
 
