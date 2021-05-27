@@ -2,7 +2,7 @@
 
 int deskew(int argc, char* argv[]) {
 	cimg_help("\nDeskew stage scan light sheet data");
-	const char* method =     cimg_option("-m", "linear", "method [linear, nn, fourier]");
+	const char* method =     cimg_option("-m", "linear", "method [linear, nn, fourier, coord, poisson]");
 	const char* file_img =   cimg_option("-i", (char*) 0, "input image file");
 	const char* file_out =   cimg_option("-o", (char*) 0, "output image file");
 	const float pitch_xy =   cimg_option("-xy", (float) 104, "xy pixel pitch");

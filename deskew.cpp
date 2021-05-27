@@ -1,4 +1,5 @@
 #include "CImg.h"
+#include <random>
 
 using namespace cimg_library;
 
@@ -54,6 +55,59 @@ namespace lsfm {
 	}
 
 
+	/*
+		Use Poisson thinning to reassign photons/counts to pixels (slower implementation)
+	*/
+	CImg<> deskew_poisson(const CImg<> &raw_stack, const int new_height, const int offset, const float slice_shift) {
+		CImg<> deskewed(raw_stack.width(), new_height, raw_stack.depth(), 1, 0);
+
+		std::default_random_engine generator;
+		std::uniform_real_distribution<float> ddist(0.0, 1.0);
+		
+		// int curr_z = -1;
+		cimg_forXYZ(raw_stack, x, y, z) {
+			// if (z != curr_z) {
+			// 	curr_z = z;
+			// 	printf("Processing slice %d of %d\n", z + 1, raw_stack.depth());
+			// }
+
+			int photon_num = raw_stack(x, y, z);
+			for (int i = 0; i < photon_num; i++) {
+				double deskewed_y = offset + (double) y + ddist(generator) - z * slice_shift;
+				deskewed(x, floor(deskewed_y), z) += 1;
+			}
+		}
+		return deskewed;
+	}
+
+
+	/*
+		Use Poisson thinning to reassign photons/counts to pixels (faster implementation)
+	*/
+	CImg<> deskew_poisson_binomial(const CImg<> &raw_stack, const int new_height, const int offset, const float slice_shift) {
+		CImg<> deskewed(raw_stack.width(), new_height, raw_stack.depth(), 1, 0);
+		
+		float further_weight = 0.5 + slice_shift - (floor(slice_shift) + 0.5);
+		std::default_random_engine generator;
+
+		// int curr_z = -1;
+		cimg_forXYZ(raw_stack, x, y, z) {
+			// if (z != curr_z) {
+			// 	curr_z = z;
+			// 	printf("Processing slice %d of %d\n", z + 1, raw_stack.depth());
+			// }
+
+			int photon_num = raw_stack(x, y, z);
+			std::binomial_distribution<> ddist(photon_num, further_weight);
+			int further = ddist(generator);
+			int further_y = ceil(offset + (double) y - z * slice_shift);
+			deskewed(x, further_y, z) += further;
+			deskewed(x, further_y - 1, z) += photon_num - further;
+		}
+		return deskewed;
+	}
+
+
 	CImg<> deskew(const CImg<> &raw_stack, const float pitch_xy, const float obj_angle, const float stage_step, const char* method) {
 		const float slice_shift = stage_step * std::sin(obj_angle * M_PI / 180) / pitch_xy;
 		const int offset = ceil(fabs(slice_shift) * raw_stack.depth()) - 1;
@@ -71,6 +125,12 @@ namespace lsfm {
 		} else if (!strcmp(method, "nn")) {
 			printf("nearest-neighbour method...\n");
 			deskewed = deskew_nn(raw_stack, new_height, offset, slice_shift);
+		} else if (!strcmp(method, "coord")) {
+			printf("Poisson-thinning (coordinate generation) method...\n");
+			deskewed = deskew_poisson(raw_stack, new_height, offset, slice_shift);
+		} else if (!strcmp(method, "poisson")) {
+			printf("Poisson-thinning (coin flip) method...\n");
+			deskewed = deskew_poisson_binomial(raw_stack, new_height, offset, slice_shift);
 		} else {
 			printf("linear method...\n");
 			deskewed = deskew_linear(raw_stack, new_height, offset, slice_shift);
