@@ -26,6 +26,17 @@ namespace lsfm {
 
 
 	/*
+		Calculate the sum of all values along z
+	*/
+	CImg<> sum(const CImg<> &raw_stack, CImg<> &proj) {
+		cimg_forXYZ(raw_stack, x, y, z) {
+			proj(x, y) += raw_stack(x, y, z);
+		}
+		return proj;
+	}
+
+
+	/*
 		Smooth the stack with a Gaussian, find the Laplacian and then max project
 	*/
 	CImg<> laplacian_mip(const CImg<> &raw_stack, CImg<> &proj) {
@@ -52,6 +63,9 @@ namespace lsfm {
 			proj = laplacian_mip(raw_stack, proj);
 		} else if (!strcmp(method, "mean")) {
 			printf("mean intensity...\n");
+			proj = mean(raw_stack, proj);
+		} else if (!strcmp(method, "sum")) {
+			printf("sum intensity...\n");
 			proj = mean(raw_stack, proj);
 		} else {
 			printf("maximum intensity...\n");
