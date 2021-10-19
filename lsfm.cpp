@@ -23,6 +23,30 @@ int deskew(int argc, char* argv[]) {
 }
 
 
+int deskew_proj(int argc, char* argv[]) {
+	cimg_help("\nDeskew stage scan light sheet data and project stack to 2D image");
+	const char* deskew_method = cimg_option("-dm", "linear", "deskew method [linear, nn, fourier, coord, poisson]");
+	const char* proj_method = cimg_option("-pm", "mip", "projection method [mip, mean, sum, laplacian]");
+	const char* file_img = cimg_option("-i", (char*) 0, "input image file");
+	const char* file_out = cimg_option("-o", (char*) 0, "output image file");
+	const float pitch_xy = cimg_option("-xy", (float) 104, "xy pixel pitch");
+	const float obj_angle =  cimg_option("-a", (float) 58.2, "objective angle");
+	const float stage_step = cimg_option("-s", (float) 500, "stage step");
+	const bool display =   cimg_option("-d", false, "display projection\n");
+	if (!file_img || !file_out) {return 1;}
+
+	CImg<> img = lsfm::load_tiff(file_img);
+	img = lsfm::deskew(img, pitch_xy, obj_angle, stage_step, deskew_method);
+	img = lsfm::proj(img, proj_method);
+	lsfm::save_tiff(img, file_out, pitch_xy, 0);
+
+	if (display) {
+		img.display("Stack projection", false);
+	}
+	return 0;
+}
+
+
 int deconv(int argc, char* argv[]) {
 	cimg_help("\nDeconvolve stack using given PSF");
 	const char* method = cimg_option("-m", "rl", "method [rl, barl]");
@@ -54,7 +78,7 @@ int deconv(int argc, char* argv[]) {
 
 int proj(int argc, char* argv[]) {
 	cimg_help("\nProject stack to 2D image");
-	const char* method =   cimg_option("-m", "mip", "method [mip, mean, laplacian]");
+	const char* method =   cimg_option("-m", "mip", "method [mip, mean, sum, laplacian]");
 	const char* file_img = cimg_option("-i", (char*) 0, "input image file");
 	const char* file_out = cimg_option("-o", (char*) 0, "output image file");
 	const float pitch_xy = cimg_option("-xy", (float) 104, "xy pixel pitch");
@@ -104,6 +128,8 @@ int main(int argc, char* argv[]) {
 		return show(argc, argv);
 	} else if (!strcmp(argv[1], "deskew")) {
 		return deskew(argc, argv);
+	} else if (!strcmp(argv[1], "deskew+proj")) {
+		return deskew_proj(argc, argv);
 	} else if (!strcmp(argv[1], "deconv")) {
 		return deconv(argc, argv);
 	} else if (!strcmp(argv[1], "proj")) {
