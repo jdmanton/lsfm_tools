@@ -30,7 +30,7 @@ namespace lsfm {
 		CImg<> deskewed(raw_stack.width(), new_height, raw_stack.depth(), 1, 0);
 		cimg_forXYZ(raw_stack, x, y, z) {
 			int deskewed_y = offset + round(y - z * slice_shift);
-			deskewed(x, deskewed_y) = raw_stack(x, y, z) > deskewed(x, deskewed_y) ? raw_stack(x, y, z) : deskewed(x, deskewed_y);
+			deskewed(x, deskewed_y, z) = raw_stack(x, y, z);
 		}
 		return deskewed;
 	}
@@ -44,12 +44,28 @@ namespace lsfm {
 		float y0 = slice_shift;
 		float y1 = floor(slice_shift);
 		float y2 = ceil(slice_shift);
-		cimg_forXYZ(raw_stack, x, y, z) {
-			float f1 = raw_stack(x, y, z);
-			float f2 = y < raw_stack.height() - 1 ? raw_stack(x, y + 1, z) : 0;
-			float interp = f1 * (y2 - y0) / (y2 - y1) + f2 * (y0 - y1) / (y2 - y1);
-			int deskewed_y = offset + round(y - z * slice_shift);
-			deskewed(x, deskewed_y, z) = interp;
+
+		if (slice_shift == 0) {
+			return raw_stack;
+		}
+
+		CImg<> raw = raw_stack;
+		float shift = slice_shift;
+		if (slice_shift < 0) {
+			raw = raw.get_mirror('z');
+			shift = -shift;
+		}
+
+		cimg_forXYZ(raw, x, y, z) {
+			int deskewed_y = offset + round(y - z * shift);
+			if (y1 == y2) {
+				deskewed(x, deskewed_y, z) = raw(x, y, z);
+			} else {
+				float f1 = raw(x, y, z);
+				float f2 = y < raw.height() - 1 ? raw(x, y + 1, z) : 0;
+				float interp = f1 * (y2 - y0) / (y2 - y1) + f2 * (y0 - y1) / (y2 - y1);
+				deskewed(x, deskewed_y, z) = interp;
+			}
 		}
 		return deskewed;
 	}
